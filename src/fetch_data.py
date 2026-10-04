@@ -2,6 +2,8 @@
 ดึงข้อมูล OpenAQ สำหรับสถานีที่เลือกไว้ตาม Day 1 checklist:
 - ใกล้นิคม: Health Promotion Hospital Maptaput, Field Crop Research Center
 - พื้นหลัง: Pluakdaeng District Health Office
+- พื้นหลังสำรอง: Agricultural Office (เพิ่มใน Day 4 เพราะ 717 มีพื้นที่อุตสาหกรรมรอบตัวมาก
+  สถานีนี้มีข้อมูลแค่ 2021-04 ถึง 2025-01 จึงใช้ตรวจผล Day 4 ไม่ใช้เป็นสถานีเทียบหลัก)
 เซฟข้อมูลรายชั่วโมงดิบ (ไม่ทำความสะอาด) ไว้ที่ data/raw/openaq_hourly_raw.csv
 """
 
@@ -99,6 +101,19 @@ STATIONS = {
             "pm10": 1266,
             "no2": 1268,
             "o3": 1267,
+        },
+    },
+    # role แยกจาก "background" เพื่อให้ Day 3 ยังเลือก 717 เป็นสถานีเทียบหลักตัวเดียว
+    225690: {
+        "name": "Agricultural Office",
+        "role": "background_alt",
+        "sensors": {
+            "so2": 1304103,
+            "pm25": 1304087,
+            "pm10": 1304108,
+            "co": 1562052,
+            "no2": 1304320,
+            "o3": 1304150,
         },
     },
 }

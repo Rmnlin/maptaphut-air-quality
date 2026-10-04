@@ -1,5 +1,5 @@
 """
-ดึงข้อมูลลมและอากาศจาก Open-Meteo Historical API สำหรับ 3 สถานีเดียวกับ fetch_data.py
+ดึงข้อมูลลมและอากาศจาก Open-Meteo Historical API สำหรับสถานีเดียวกับ fetch_data.py
 
 ใช้ 2 โมเดล:
 - ecmwf_ifs (grid 9 กม.)  = ตัวหลัก แยกสถานีใกล้นิคมทั้งสองได้จริง แต่มีข้อมูลตั้งแต่ ~2021
@@ -24,6 +24,7 @@ STATIONS = {
     225611: {"lat": 12.7087, "lon": 101.1660, "name": "Health Promotion Hospital Maptaput", "role": "near"},
     7846: {"lat": 12.7352, "lon": 101.1356, "name": "Field Crop Research Center, Rayong", "role": "near"},
     717: {"lat": 12.9738, "lon": 101.2129, "name": "Pluakdaeng District Health Office", "role": "control"},
+    225690: {"lat": 12.67155, "lon": 101.2758667, "name": "Agricultural Office", "role": "background_alt"},
 }
 
 MODELS = ["ecmwf_ifs", "era5"]
