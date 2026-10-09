@@ -1,8 +1,8 @@
 """
 ดึงข้อมูล OpenAQ สำหรับสถานีที่เลือกไว้ตาม Day 1 checklist:
 - ใกล้นิคม: Health Promotion Hospital Maptaput, Field Crop Research Center
-- พื้นหลัง: Pluakdaeng District Health Office
-- พื้นหลังสำรอง: Agricultural Office (เพิ่มใน Day 4 เพราะ 717 มีพื้นที่อุตสาหกรรมรอบตัวมาก
+- สถานีอ้างอิง: Pluakdaeng District Health Office
+- สถานีอ้างอิงสำรอง: Agricultural Office (เพิ่มใน Day 4 เพราะ 717 มีพื้นที่อุตสาหกรรมรอบตัวมาก
   สถานีนี้มีข้อมูลแค่ 2021-04 ถึง 2025-01 จึงใช้ตรวจผล Day 4 ไม่ใช้เป็นสถานีเทียบหลัก)
 เซฟข้อมูลรายชั่วโมงดิบ (ไม่ทำความสะอาด) ไว้ที่ data/raw/openaq_hourly_raw.csv
 """
@@ -66,7 +66,7 @@ def get_location_sensors(location_id: int) -> list[dict]:
     return resp.json()["results"]
 
 
-# สถานีที่เลือกไว้ตาม Day 1 checklist (role: near = ใกล้นิคม, background = พื้นหลัง)
+# สถานีที่เลือกไว้ตาม Day 1 checklist (role: near = ใกล้นิคม, background = สถานีอ้างอิง)
 STATIONS = {
     225611: {
         "name": "Health Promotion Hospital Maptaput",
