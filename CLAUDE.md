@@ -12,9 +12,9 @@
 ## สถานะงาน (อัปเดต 10 ต.ค. 2026)
 - Day 0-6 (โน้ตบุ๊ก 01-06 และ CSV 6 ไฟล์ใน `data/export/`) commit แล้ว
 - Power BI ครบ 5 หน้า คือ ภาพรวม เหตุการณ์ พยากรณ์ ทิศลม แผนที่ รายละเอียดและการเปลี่ยนแปลงทุกรอบอยู่ใน `dashboard/pages_spec.md` (เก็บในเครื่องเท่านั้น ไม่ขึ้น git)
-- ทำงานในไฟล์ `dashboard/maptaphut_air_quality.pbip` ส่วนไฟล์ .pbix ยังเป็นของเก่า ตอนจบให้ผู้ใช้ Save as .pbix ทับ แล้วค่อย commit
-- ใน git เก็บแค่ .pbix ไฟล์ .pbip (โฟลเดอร์ `.Report` และ `.SemanticModel`) กับ `dashboard/maptaphut_theme.json` ถูก ignore ไว้ตามที่ผู้ใช้เลือก ห้ามลบโฟลเดอร์ .pbip ก่อน Save as .pbix เพราะงานล่าสุดอยู่ในนั้น
-- ขั้นต่อไป: Save as .pbix, commit, แล้วเขียน Day 7 `README.md` (ตอนนี้ยังว่าง)
+- dashboard ครบ 5 หน้า commit แล้วใน `057be44` ไฟล์ .pbix ที่ commit ตรวจแล้วว่ามีครบทุกหน้าและมี theme
+- ใน git เก็บแค่ .pbix ไฟล์ .pbip (โฟลเดอร์ `.Report` และ `.SemanticModel`), `dashboard/maptaphut_theme.json` และ `dashboard/pages_spec.md` เก็บในเครื่องเท่านั้น ถ้าแก้ dashboard อีก ให้แก้ใน .pbip แล้วผู้ใช้ต้อง Save as เลือกชนิดไฟล์ .pbix (กด Save ธรรมดาจะเซฟลง .pbip)
+- ขั้นต่อไป: เขียน Day 7 `README.md` (ตอนนี้ยังว่าง)
 
 ## ข้อเท็จจริงของข้อมูลที่ต้องเขียนให้ถูก
 - ข้อมูลดึงผ่าน OpenAQ ล่าสุด 2 ต.ค. 2026 เป็นการวิเคราะห์ย้อนหลัง ไม่ใช่เรียลไทม์ และไม่มีระบบแจ้งเตือนจริง ตัวเลข Precision/Recall คือการทดสอบย้อนหลังว่าถ้าใช้ค่าพยากรณ์เตือนจะได้ผลแค่ไหน
