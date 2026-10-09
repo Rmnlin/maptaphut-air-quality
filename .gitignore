@@ -220,3 +220,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Power BI project (.pbip) ใช้ทำงานในเครื่องเท่านั้น ใน git เก็บแค่ .pbix
+dashboard/*.pbip
+dashboard/*.Report/
+dashboard/*.SemanticModel/
+dashboard/maptaphut_theme.json
+dashboard/pages_spec.md
