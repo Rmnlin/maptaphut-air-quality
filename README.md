@@ -289,7 +289,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-An OpenAQ API key is required. Copy `.env.example` to `.env` and fill it in; `.env` is never committed. Then run the three scripts in `src/` and work through the notebooks in order. Notebook 06 writes the six CSV files that Power BI reads.
+An OpenAQ API key is required. Create a `.env` file in the project root containing `OPENAQ_API_KEY=your key`; `.env` is never committed. Then run the three scripts in `src/` and work through the notebooks in order. Notebook 06 writes the six CSV files that Power BI reads.
 
 ## Figures
 
