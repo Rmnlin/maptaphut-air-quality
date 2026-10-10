@@ -1,6 +1,17 @@
 # Map Ta Phut Air Quality Monitoring (retrospective analysis)
 
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white) ![pandas](https://img.shields.io/badge/pandas-3.0-150458?style=flat-square&logo=pandas&logoColor=white) ![LightGBM](https://img.shields.io/badge/LightGBM-4.7-2E8B57?style=flat-square) ![Power BI](https://img.shields.io/badge/Power%20BI-5%20pages-F2C811?style=flat-square&logo=powerbi&logoColor=black) ![Data](https://img.shields.io/badge/data-OpenAQ%20%7C%20Open--Meteo%20%7C%20OSM-556B2F?style=flat-square)
+
 > **This is a retrospective analysis, not a real-time system.** Data was pulled from OpenAQ, with the latest observations on 2 October 2026. There is no live alert system. The precision and recall figures reported below come from a back-test that asks: if the 24-hour-ahead forecasts had been used to issue warnings, how well would those warnings have performed?
+
+## Results at a glance
+
+| What was measured | Result |
+|---|---|
+| Episodes detected | 1,796 across six pollutants, at the two stations near the estate |
+| Consistent with a local source | 62.0% of SO₂ episodes, against 0.8% regional |
+| Consistent with regional pollution | 43.3% of PM2.5 episodes, the opposite pattern to SO₂ |
+| 24-hour forecast | LightGBM 5.13 MAE against persistence 4.69, so the simple baseline wins |
 
 ## What this project asks
 
@@ -141,7 +152,11 @@ Neither method wins outright for PM2.5. LightGBM warns less often but is right m
 
 A five-page Power BI report, `dashboard/maptaphut_air_quality.pbix`. **Screenshots and a walk-through of every page are in [docs/POWER_BI.md](docs/POWER_BI.md).**
 
-[![Episodes page](docs/assets/dashboard-episodes.jpg)](docs/POWER_BI.md)
+<p align="center">
+  <a href="docs/assets/dashboard-overview.jpg"><img src="docs/assets/dashboard-overview.jpg" width="32%" alt="Overview page"></a>
+  <a href="docs/assets/dashboard-episodes.jpg"><img src="docs/assets/dashboard-episodes.jpg" width="32%" alt="Episodes page"></a>
+  <a href="docs/assets/dashboard-map.jpg"><img src="docs/assets/dashboard-map.jpg" width="32%" alt="Map page"></a>
+</p>
 
 | Page | Question it answers |
 |---|---|
@@ -202,6 +217,65 @@ The validation half-year contains no hot season. Wind at the issue time is used 
 
 Industrial locations come from OpenStreetMap alone, not the WRI database, and 205 of 277 sites are unnamed. The 1/d² weighting is a crude stand-in for dilution, not a dispersion model. The PM2.5 warning threshold of 37.5 µg/m³ is a 24-hour standard applied to hourly values, so it is a reference level rather than an exceedance. The SO₂ threshold of 0.1 ppm was confirmed from a secondary source and has not been checked against the original gazette text.
 
+## Project structure
+
+```
+maptaphut-air-quality
+├── .env.example
+├── .gitignore
+├── CLAUDE.md
+├── README.md
+├── maptaphut_air_quality_7day_plan.md
+├── requirements.txt
+├── dashboard
+│   └── maptaphut_air_quality.pbix
+├── data
+│   ├── export
+│   │   ├── episodes.csv
+│   │   ├── forecast.csv
+│   │   ├── hourly.csv
+│   │   ├── plants.csv
+│   │   ├── stations.csv
+│   │   └── wind_sectors.csv
+│   ├── processed
+│   └── raw
+├── docs
+│   ├── POWER_BI.md
+│   └── assets
+├── notebooks
+│   ├── 01_data_check.ipynb
+│   ├── 02_cleaning.ipynb
+│   ├── 03_episodes.ipynb
+│   ├── 04_attribution.ipynb
+│   ├── 05_forecast.ipynb
+│   └── 06_export.ipynb
+├── reports
+│   ├── cpf_rose.png
+│   ├── example_episodes.png
+│   ├── manual_check_1.png
+│   ├── manual_check_2.png
+│   └── manual_check_3.png
+└── src
+    ├── fetch_data.py
+    ├── fetch_osm.py
+    └── fetch_wind.py
+```
+
+The pipeline runs in one direction. The three scripts in `src/` download the measurements, the wind and the industrial sites, the notebooks run in numbered order, notebook 06 writes the six files in `data/export/`, and the dashboard reads those six files and nothing else.
+
+`data/raw/` and `data/processed/` are rebuilt by running the pipeline, so they are not committed and appear empty above. `docs/assets/` holds the five dashboard screenshots.
+
+### What `data/export/` holds
+
+| Exported file | Rows | One row is |
+|---|---|---|
+| `hourly.csv` | 151,093 | one station-hour |
+| `episodes.csv` | 1,796 | one labelled episode |
+| `forecast.csv` | 7,659 | one forecast hour for one pollutant |
+| `plants.csv` | 277 | one industrial site |
+| `wind_sectors.csv` | 64 | one station, pollutant and direction |
+| `stations.csv` | 4 | one station |
+
 ## Reproducing this
 
 Python 3.13 on Windows.
@@ -212,27 +286,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-An OpenAQ API key is required. Copy `.env.example` to `.env` and fill it in; `.env` is never committed. Then run `src/fetch_data.py`, `src/fetch_wind.py` and `src/fetch_osm.py`, and work through the notebooks in order. Notebook 06 writes the six CSV files that Power BI reads.
-
-```
-data/raw/         API responses, never edited
-data/processed/   cleaned tables (not in git)
-data/export/      six CSVs for Power BI
-notebooks/        01 data check, 02 cleaning, 03 episodes,
-                  04 attribution, 05 forecast, 06 export
-src/              fetch_data.py, fetch_wind.py, fetch_osm.py
-reports/          figures
-dashboard/        maptaphut_air_quality.pbix
-```
-
-| Exported file | Rows | One row is |
-|---|---|---|
-| `hourly.csv` | 151,093 | one station-hour |
-| `episodes.csv` | 1,796 | one labelled episode |
-| `forecast.csv` | 7,659 | one forecast hour for one pollutant |
-| `plants.csv` | 277 | one industrial site |
-| `wind_sectors.csv` | 64 | one station, pollutant and direction |
-| `stations.csv` | 4 | one station |
+An OpenAQ API key is required. Copy `.env.example` to `.env` and fill it in; `.env` is never committed. Then run the three scripts in `src/` and work through the notebooks in order. Notebook 06 writes the six CSV files that Power BI reads.
 
 ## Figures
 
