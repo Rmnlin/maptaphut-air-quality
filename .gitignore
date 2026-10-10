@@ -227,3 +227,8 @@ dashboard/*.Report/
 dashboard/*.SemanticModel/
 dashboard/maptaphut_theme.json
 dashboard/pages_spec.md
+
+# ไฟล์ที่ใช้ทำงานในเครื่องเท่านั้น ไม่ขึ้น git
+.env.example
+CLAUDE.md
+maptaphut_air_quality_7day_plan.md
