@@ -305,8 +305,8 @@ An OpenAQ API key is required. Create a `.env` file in the project root containi
 
 | File | What it shows |
 |---|---|
-| `reports/example_episodes.png` | Four example episodes, including one regional and one local pattern |
-| `reports/cpf_rose.png` | Conditional probability by wind direction, for SO₂ and PM2.5 |
+| `reports/example_episodes.png` | Four example episodes: PM2.5 in January 2025 where all stations rise together, PM2.5 in March 2025 where only a near-estate station stays high, and two SO₂ jumps at station 225611 that then stay flat, one of them the June 2025 case under Limitations |
+| `reports/cpf_rose.png` | Conditional probability by wind direction, for SO₂ and PM2.5: how likely a reading in the station's top 25% is when the wind comes from each direction. Orange bars are the estate directions |
 | `reports/manual_check_1.png` to `_3.png` | The 15 episodes reviewed by eye |
 
 ## Credits
