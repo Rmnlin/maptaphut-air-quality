@@ -13,6 +13,13 @@
 | Consistent with regional pollution | 43.3% of PM2.5 episodes, the opposite pattern to SO₂ |
 | 24-hour forecast | LightGBM 5.13 MAE against persistence 4.69, so the simple baseline wins |
 
+Terms used in the table:
+
+- **Episode:** a run of consecutive hours at one station and for one pollutant that count as abnormally high under the rule in Methods.
+- **Consistent with a local source** (`local-consistent`): the wind came from the estate's direction for at least 60% of the episode's hours, and the station read higher than the distant reference station by an unusually large margin (above the p75 threshold).
+- **Consistent with regional pollution** (`regional`): the distant reference station read at least half as high as the near-estate station, and the difference stayed below the p75 threshold, so the two rose together.
+- **Local increment:** the near-estate reading minus the reference reading in the same hour. A large positive value means the near-estate station is high and the reference is not.
+
 ## What this project asks
 
 Map Ta Phut, Rayong, hosts one of Thailand's largest industrial estates. Air pollution readings there are sometimes high, and the same high reading could come from nearby sources or from haze affecting the whole region. This project asks three questions:
@@ -80,18 +87,24 @@ No negative or duplicate values were found. Sensor-stuck runs were **flagged, no
 
 ### 1. Detecting episodes
 
+*In plain terms: an hour is abnormal if it is unusually high for that station, season and time of day, or if it breaks the national standard.*
+
 An hour is flagged when it meets **either** of two criteria:
 
-- **Robust z-score ≥ 5**, computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for gases), because 30% of SO₂ groups otherwise have a deviation of zero and the score would divide by zero.
+- **Robust z-score ≥ 5**: the reading sits at least five typical spreads above the usual level, where the usual level is the median so that a few extreme hours do not distort it. It is computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for gases), because 30% of SO₂ groups otherwise have a deviation of zero and the score would divide by zero.
 - **Above the national standard**, using the 1-hour limit for gases and the 24-hour rolling mean for PM2.5 and PM10, requiring at least 18 of 24 hours present.
 
 Both are needed. For PM2.5, 4,445 hours exceed the standard while the z-score sees nothing, because dry-season haze is "normal" for that season at that station. Flagged hours that are consecutive at the same station and pollutant become one episode.
 
 ### 2. Local increment
 
-The local increment is the near-estate reading minus the reference reading at the same hour. Hours when wind carries the estate into the reference station itself are excluded from the comparison.
+*In plain terms: subtracting a distant station removes the haze that covers the whole region, so what is left is more consistent with something local.*
+
+The local increment is the near-estate reading minus the reference reading at the same hour. Hours when wind carries the estate into the reference station itself are excluded from the comparison, because the reference then picks up the same pollution and the difference would be understated.
 
 ### 3. Labelling each episode
+
+*In plain terms: each episode is labelled by asking two questions. Did the distant station rise too, and did the wind come from the estate?*
 
 Industrial directions were defined from OpenStreetMap geometry **before any pollution data was examined**: sectors were ranked by area weighted by 1/d², and the top sectors making up 80% of the weight were taken as the estate directions. Rules are applied in order, and the first match wins:
 
@@ -101,6 +114,8 @@ Industrial directions were defined from OpenStreetMap geometry **before any poll
 4. `unclear-mixed` otherwise
 
 ### 4. Forecasting
+
+*In plain terms: the model predicts the level 24 hours ahead from what is known now, and is judged against two simple rules of thumb that need no model.*
 
 The target is PM2.5 and SO₂ 24 hours ahead at station 225611. Every feature uses data at or before the issue time. The split is chronological and never random: training up to 30 June 2024, validation from July to December 2024, and test from 1 January 2025 onwards. Two baselines are required, `persistence` (the value 24 hours from now equals the current value) and `naive_week` (the value one week earlier).
 
@@ -119,9 +134,12 @@ The target is PM2.5 and SO₂ 24 hours ahead at station 225611. Every feature us
 | CO | 66 | 0.0% | 0.0% | 100.0% |
 | PM10 | 33 | 6.1% | 9.1% | 84.8% |
 
-The split fits what is known about these pollutants, although the rules were never told about it. SO₂ is overwhelmingly local-consistent and almost never regional, which fits a combustion gas with nearby sources. PM2.5 is the reverse. CO has no label at all because the reference station never measured CO.
+The split fits what is known about these pollutants, although the rules were never told about it:
 
-Day 3 detects 2,451 episodes across all three main stations. The exported table holds the 1,796 that belong to the two near-estate stations, which are the ones the labelling rules can judge.
+- SO₂ is overwhelmingly local-consistent and almost never regional, which fits a combustion gas with nearby sources.
+- PM2.5 is the reverse, with far more regional episodes than local-consistent ones.
+- CO has no label at all because the reference station never measured CO.
+- Day 3 detects 2,451 episodes across all three main stations. The exported table holds the 1,796 that belong to the two near-estate stations, which are the ones the labelling rules can judge.
 
 ### Label names
 
@@ -140,7 +158,9 @@ Averaged over the whole record, the PM2.5 increment is **+3.17 µg/m³ at statio
 | January 2025 | 47.0 | 46.1 | 0.9 | 353 |
 | March 2025 | 37.8 | 24.4 | 13.4 | 609 |
 
-In January both sites rise together, which is consistent with regional haze. In March the near-estate station stays high while the reference does not, which is consistent with a local excess. The January median increment is actually −3.9, so the small positive mean comes from a minority of hours rather than a steady offset.
+- In January both sites rise together, which is consistent with regional haze.
+- In March the near-estate station stays high while the reference does not, which is consistent with a local excess.
+- The January median increment is actually −3.9, so the small positive mean comes from a minority of hours rather than a steady offset.
 
 ### Forecast: the model does not beat the baseline
 
@@ -149,7 +169,11 @@ In January both sites rise together, which is consistent with regional haze. In 
 | PM2.5 MAE (µg/m³) | **4.69** | 7.55 | 5.13 |
 | SO₂ MAE (ppm) | **0.0065** | 0.0106 | 0.0186 |
 
-LightGBM won on validation and lost on test. Three causes were found. The test period is unlike the training period, with a median PM2.5 of 21.95 against 18.00 and 666 SO₂ rows above 0.05 ppm against 32 in training. Most of the SO₂ loss falls inside the suspected sensor-drift window. The validation half-year contains no hot season.
+LightGBM won on validation and lost on test. Three causes were found:
+
+- The test period is unlike the training period, with a median PM2.5 of 21.95 against 18.00 and 666 SO₂ rows above 0.05 ppm against 32 in training.
+- Most of the SO₂ loss falls inside the suspected sensor-drift window.
+- The validation half-year contains no hot season.
 
 ### Back-tested warnings
 
@@ -162,7 +186,8 @@ Treating a forecast at or above the threshold as a warning, over the test period
 | SO₂ | persistence | 6 | 2 | 0 | 0.000 | 0.000 |
 | SO₂ | LightGBM | 6 | 0 | 0 | n/a | 0.000 |
 
-Neither method wins outright for PM2.5. LightGBM warns less often but is right more often when it does. SO₂ has only six real exceedance hours in the test set, far too few to conclude anything.
+- Neither method wins outright for PM2.5. LightGBM warns less often but is right more often when it does.
+- SO₂ has only six real exceedance hours in the test set, far too few to conclude anything.
 
 ## Dashboard
 
