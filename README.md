@@ -15,10 +15,9 @@
 
 Terms used in the table:
 
-- **Episode:** a run of consecutive hours at one station and for one pollutant that count as abnormally high under the rule in Methods.
-- **Consistent with a local source** (`local-consistent`): the wind came from the estate's direction for at least 60% of the episode's hours, and the station read higher than the distant reference station by an unusually large margin (above the p75 threshold).
-- **Consistent with regional pollution** (`regional`): the distant reference station read at least half as high as the near-estate station, and the difference stayed below the p75 threshold, so the two rose together.
-- **Local increment:** the near-estate reading minus the reference reading in the same hour. A large positive value means the near-estate station is high and the reference is not.
+- **Episode:** a run of consecutive abnormal hours at one station for one pollutant, as defined in Methods.
+- **Consistent with a local source:** the wind blew from the estate's direction and the station read well above the distant reference station.
+- **Consistent with regional pollution:** the distant reference station rose along with the near-estate station.
 
 ## What this project asks
 
@@ -87,9 +86,7 @@ No negative or duplicate values were found. Sensor-stuck runs were **flagged, no
 
 ### 1. Detecting episodes
 
-*In plain terms: an hour is abnormal if it is unusually high for that station, season and time of day, or if it breaks the national standard.*
-
-An hour is flagged when it meets **either** of two criteria:
+An hour is flagged as abnormal when it meets **either** of two criteria:
 
 - **Robust z-score ≥ 5**: the reading sits at least five typical spreads above the usual level, where the usual level is the median so that a few extreme hours do not distort it. It is computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for gases), because 30% of SO₂ groups otherwise have a deviation of zero and the score would divide by zero.
 - **Above the national standard**, using the 1-hour limit for gases and the 24-hour rolling mean for PM2.5 and PM10, requiring at least 18 of 24 hours present.
@@ -98,13 +95,9 @@ Both are needed. For PM2.5, 4,445 hours exceed the standard while the z-score se
 
 ### 2. Local increment
 
-*In plain terms: subtracting a distant station removes the haze that covers the whole region, so what is left is more consistent with something local.*
-
-The local increment is the near-estate reading minus the reference reading at the same hour. Hours when wind carries the estate into the reference station itself are excluded from the comparison, because the reference then picks up the same pollution and the difference would be understated.
+The local increment is the near-estate reading minus the reference reading at the same hour, which removes the haze that covers the whole region and leaves what is more consistent with something local. Hours when wind carries the estate into the reference station itself are excluded from the comparison, because the reference then picks up the same pollution and the difference would be understated.
 
 ### 3. Labelling each episode
-
-*In plain terms: each episode is labelled by asking two questions. Did the distant station rise too, and did the wind come from the estate?*
 
 Industrial directions were defined from OpenStreetMap geometry **before any pollution data was examined**: sectors were ranked by area weighted by 1/d², and the top sectors making up 80% of the weight were taken as the estate directions. Rules are applied in order, and the first match wins:
 
@@ -115,9 +108,7 @@ Industrial directions were defined from OpenStreetMap geometry **before any poll
 
 ### 4. Forecasting
 
-*In plain terms: the model predicts the level 24 hours ahead from what is known now, and is judged against two simple rules of thumb that need no model.*
-
-The target is PM2.5 and SO₂ 24 hours ahead at station 225611. Every feature uses data at or before the issue time. The split is chronological and never random: training up to 30 June 2024, validation from July to December 2024, and test from 1 January 2025 onwards. Two baselines are required, `persistence` (the value 24 hours from now equals the current value) and `naive_week` (the value one week earlier).
+The target is PM2.5 and SO₂ 24 hours ahead at station 225611. Every feature uses data at or before the issue time. The split is chronological and never random: training up to 30 June 2024, validation from July to December 2024, and test from 1 January 2025 onwards. Two baselines are required, both simple rules that need no model: `persistence` (the value 24 hours from now equals the current value) and `naive_week` (the value one week earlier).
 
 ## Results
 
