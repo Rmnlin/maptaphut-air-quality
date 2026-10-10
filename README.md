@@ -23,6 +23,26 @@ Map Ta Phut, Rayong, hosts one of Thailand's largest industrial estates. Air pol
 
 Throughout, "consistent with" is used deliberately. The labels describe statistical agreement with wind direction and a reference station. They do not prove the cause of any episode, and no individual facility is identified.
 
+## Pipeline
+
+```mermaid
+flowchart LR
+    subgraph sources["Sources"]
+        A["OpenAQ<br/>measurements"]
+        B["Open-Meteo<br/>wind"]
+        C["OpenStreetMap<br/>industrial sites"]
+    end
+    A --> S
+    B --> S
+    C --> S
+    S["src/<br/>three fetch scripts"] --> R["data/raw/"]
+    R --> N["notebooks/<br/>01 to 06"]
+    N --> E["data/export/<br/>six CSV files"]
+    E --> P["Power BI<br/>five pages"]
+```
+
+Nothing runs backwards, and every step after the three fetch scripts works offline.
+
 ## Data
 
 ### Stations
@@ -221,27 +241,12 @@ Industrial locations come from OpenStreetMap alone, not the WRI database, and 20
 
 ```
 maptaphut-air-quality
-├── .env.example
-├── .gitignore
-├── CLAUDE.md
 ├── README.md
-├── maptaphut_air_quality_7day_plan.md
 ├── requirements.txt
-├── dashboard
-│   └── maptaphut_air_quality.pbix
-├── data
-│   ├── export
-│   │   ├── episodes.csv
-│   │   ├── forecast.csv
-│   │   ├── hourly.csv
-│   │   ├── plants.csv
-│   │   ├── stations.csv
-│   │   └── wind_sectors.csv
-│   ├── processed
-│   └── raw
-├── docs
-│   ├── POWER_BI.md
-│   └── assets
+├── src
+│   ├── fetch_data.py
+│   ├── fetch_osm.py
+│   └── fetch_wind.py
 ├── notebooks
 │   ├── 01_data_check.ipynb
 │   ├── 02_cleaning.ipynb
@@ -249,21 +254,19 @@ maptaphut-air-quality
 │   ├── 04_attribution.ipynb
 │   ├── 05_forecast.ipynb
 │   └── 06_export.ipynb
+├── data
+│   ├── raw
+│   ├── processed
+│   └── export
 ├── reports
-│   ├── cpf_rose.png
-│   ├── example_episodes.png
-│   ├── manual_check_1.png
-│   ├── manual_check_2.png
-│   └── manual_check_3.png
-└── src
-    ├── fetch_data.py
-    ├── fetch_osm.py
-    └── fetch_wind.py
+├── docs
+│   ├── POWER_BI.md
+│   └── assets
+└── dashboard
+    └── maptaphut_air_quality.pbix
 ```
 
-The pipeline runs in one direction. The three scripts in `src/` download the measurements, the wind and the industrial sites, the notebooks run in numbered order, notebook 06 writes the six files in `data/export/`, and the dashboard reads those six files and nothing else.
-
-`data/raw/` and `data/processed/` are rebuilt by running the pipeline, so they are not committed and appear empty above. `docs/assets/` holds the five dashboard screenshots.
+`data/raw/` and `data/processed/` are rebuilt by running the pipeline, so they are not committed. The six files in `data/export/` are, which is why the dashboard opens without an API key. `reports/` holds the figures listed below, and `docs/assets/` the dashboard screenshots.
 
 ### What `data/export/` holds
 
