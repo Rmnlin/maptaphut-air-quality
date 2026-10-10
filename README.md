@@ -17,7 +17,7 @@
 
 Map Ta Phut, Rayong, hosts one of Thailand's largest industrial estates. Air pollution readings there are sometimes high, and the same high reading could come from nearby sources or from haze affecting the whole region. This project asks three questions:
 
-1. When do pollutant levels rise abnormally (episodes)?
+1. How often do pollutant levels rise abnormally, and in what form (episodes)?
 2. Is each episode *consistent with* a local source or with regional pollution?
 3. Can a model forecast PM2.5 and SO₂ 24 hours ahead better than a simple baseline?
 
@@ -54,8 +54,6 @@ Nothing runs backwards, and every step after the three fetch scripts works offli
 | 717 | Pluakdaeng District Health Office | Reference (main) | 33.4 km |
 | 225690 | Agricultural Office | Reference (alternative, for checking only) | 13.7 km |
 
-Distances are measured from the Map Ta Phut search point used to find the stations (12.6833, 101.1333 in `src/fetch_data.py`). Station to station, 225611 and 7846 are 4.4 km apart, and 225611 to 717 is 29.9 km.
-
 ### Coverage and missing data
 
 Pollutants were not measured over the same periods. SO₂ at station 717 starts in January 2016, but PM2.5 only starts in April 2021, and February 2022 at station 7846. Other pollutants have shorter, patchier records. Missing data is counted from the first to the last day each station has data for that pollutant.
@@ -84,7 +82,7 @@ No negative or duplicate values were found. Sensor-stuck runs were **flagged, no
 
 An hour is flagged when it meets **either** of two criteria:
 
-- **Robust z-score ≥ 5**, computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for gases), because 30% of SO₂ groups otherwise have a deviation of zero and the score would divide by zero. A threshold of 3 was rejected because it flags about 7% of all hours.
+- **Robust z-score ≥ 5**, computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for gases), because 30% of SO₂ groups otherwise have a deviation of zero and the score would divide by zero.
 - **Above the national standard**, using the 1-hour limit for gases and the 24-hour rolling mean for PM2.5 and PM10, requiring at least 18 of 24 hours present.
 
 Both are needed. For PM2.5, 4,445 hours exceed the standard while the z-score sees nothing, because dry-season haze is "normal" for that season at that station. Flagged hours that are consecutive at the same station and pollutant become one episode.
@@ -101,8 +99,6 @@ Industrial directions were defined from OpenStreetMap geometry **before any poll
 2. `regional` if the reference station reads at least half of the near-station value **and** the increment does not exceed the p75 threshold
 3. `local-consistent` if wind comes from an estate direction for at least 60% of hours **and** the increment exceeds p75
 4. `unclear-mixed` otherwise
-
-The `regional` rule in step 2 was revised **after** seeing that the pre-registered version mislabelled events. The original results are kept for comparison, as described under Limitations.
 
 ### 4. Forecasting
 
@@ -123,7 +119,7 @@ The target is PM2.5 and SO₂ 24 hours ahead at station 225611. Every feature us
 | CO | 66 | 0.0% | 0.0% | 100.0% |
 | PM10 | 33 | 6.1% | 9.1% | 84.8% |
 
-The split matches the physics without being told about it. SO₂ is overwhelmingly local-consistent and almost never regional, which fits a combustion gas with nearby sources. PM2.5 is the reverse. CO has no label at all because the reference station never measured CO.
+The split fits what is known about these pollutants, although the rules were never told about it. SO₂ is overwhelmingly local-consistent and almost never regional, which fits a combustion gas with nearby sources. PM2.5 is the reverse. CO has no label at all because the reference station never measured CO.
 
 Day 3 detects 2,451 episodes across all three main stations. The exported table holds the 1,796 that belong to the two near-estate stations, which are the ones the labelling rules can judge.
 
@@ -153,7 +149,7 @@ In January both sites rise together, which is consistent with regional haze. In 
 | PM2.5 MAE (µg/m³) | **4.69** | 7.55 | 5.13 |
 | SO₂ MAE (ppm) | **0.0065** | 0.0106 | 0.0186 |
 
-LightGBM won on validation and lost on test. Three causes were found. The test period is unlike the training period, with a median PM2.5 of 21.95 against 18.00 and 666 SO₂ rows above 0.05 ppm against 32 in training. Most of the SO₂ loss falls inside the suspected sensor-drift window. The validation half-year contains no hot season. The model was **not** retuned afterwards, because tuning against a test set that has already been seen would make the result meaningless.
+LightGBM won on validation and lost on test. Three causes were found. The test period is unlike the training period, with a median PM2.5 of 21.95 against 18.00 and 666 SO₂ rows above 0.05 ppm against 32 in training. Most of the SO₂ loss falls inside the suspected sensor-drift window. The validation half-year contains no hot season.
 
 ### Back-tested warnings
 
@@ -186,8 +182,6 @@ A five-page Power BI report, `dashboard/maptaphut_air_quality.pbix`. **Screensho
 | ทิศลม (Wind direction) | Which wind directions bring high readings? |
 | แผนที่ (Map) | Where are the stations and industrial sites? |
 
-Two visual choices were forced by the tool. Power BI has no built-in polar chart, so the wind page uses a 16-direction bar chart instead of a wind rose; a bar chart was preferred over a Python visual because it needs no add-in and responds to slicers. Azure Maps would not render on this machine, so the map page uses a scatter chart of longitude and latitude.
-
 Power BI reads only the six CSV files in `data/export/` and runs no model of its own.
 
 ## Limitations
@@ -202,7 +196,7 @@ Station 717 has **40.9 km² of industrial land within 10 km**, more than either 
 
 ### PM2.5 labels depend on which reference station is used
 
-Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ episodes and 39 of 41 NO₂ episodes, but for only **28 of 50 PM2.5 episodes (56.0%)**. Across all pollutants, 411 of the 445 episodes that both stations can judge agree (92.4%). PM2.5 episodes sit close to the threshold, so the label flips easily. **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
+Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ episodes and 39 of 41 NO₂ episodes, but for only **28 of 50 PM2.5 episodes (56.0%)**. Across all pollutants, 411 of the 445 episodes that both stations can judge agree (92.4%). **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
 
 ### One rule was written after seeing results
 
