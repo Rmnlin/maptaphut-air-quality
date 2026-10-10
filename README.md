@@ -202,7 +202,7 @@ Station 717 has **40.9 km² of industrial land within 10 km**, more than either 
 
 ### PM2.5 labels depend on which reference station is used
 
-Re-labelling against station 225690 gives the same answer for **SO₂ 100%** of the time and NO₂ 95.1%, but only **56.0% for PM2.5**, over the 445 episodes both can judge. PM2.5 episodes sit close to the threshold, so the label flips easily. **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
+Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ episodes and 39 of 41 NO₂ episodes, but for only **28 of 50 PM2.5 episodes (56.0%)**. Across all pollutants, 411 of the 445 episodes that both stations can judge agree (92.4%). PM2.5 episodes sit close to the threshold, so the label flips easily. **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
 
 ### One rule was written after seeing results
 
