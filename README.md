@@ -10,7 +10,7 @@
 |---|---|
 | Episodes detected | 1,796 across six pollutants, at the two stations near the estate |
 | Consistent with a local source | 62.0% of SO₂ episodes, against 0.8% regional |
-| Consistent with regional pollution | 43.3% of PM2.5 episodes, the opposite pattern to SO₂ |
+| Consistent with regional pollution | 43.3% of PM2.5 episodes, the opposite pattern to SO₂ (a tendency only, see Limitations) |
 | 24-hour forecast | LightGBM 5.13 MAE against persistence 4.69, so the simple baseline wins |
 
 Terms used in the table:
@@ -120,7 +120,7 @@ The target is PM2.5 and SO₂ 24 hours ahead at station 225611. Every feature us
 |---|---|---|---|---|
 | SO₂ | 1,169 | 62.0% | 0.8% | 37.2% |
 | O₃ | 279 | 55.9% | 9.7% | 34.4% |
-| PM2.5 | 127 | 18.9% | 43.3% | 37.7% |
+| PM2.5 | 127 | 18.9% | 43.3% | 37.8% |
 | NO₂ | 122 | 49.2% | 0.8% | 50.0% |
 | CO | 66 | 0.0% | 0.0% | 100.0% |
 | PM10 | 33 | 6.1% | 9.1% | 84.8% |
@@ -130,7 +130,7 @@ The split fits what is known about these pollutants, although the rules were nev
 - SO₂ is overwhelmingly local-consistent and almost never regional, which fits a combustion gas with nearby sources.
 - PM2.5 is the reverse, with far more regional episodes than local-consistent ones.
 - CO has no label at all because the reference station never measured CO.
-- Day 3 detects 2,451 episodes across all three main stations. The exported table holds the 1,796 that belong to the two near-estate stations, which are the ones the labelling rules can judge.
+- Notebook 03 detects 2,451 episodes across all three main stations. The exported table holds the 1,796 that belong to the two near-estate stations, which are the ones the labelling rules can judge.
 
 ### Label names
 
@@ -214,11 +214,15 @@ Station 717 has **40.9 km² of industrial land within 10 km**, more than either 
 
 Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ episodes and 39 of 41 NO₂ episodes, but for only **28 of 50 PM2.5 episodes (56.0%)**. Across all pollutants, 411 of the 445 episodes that both stations can judge agree (92.4%). **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
 
-### One rule was written after seeing results
+<details>
+<summary><b>One rule was written after seeing results</b></summary>
 
 Every rule was pre-registered except the final `regional` rule, which was revised after the pre-registered version proved faulty. It changed 3.0% of labels and, in practice, is decided by the increment condition rather than the ratio condition. Both versions are reported so the reader can judge.
 
-### Validation checks, since there is no ground truth
+</details>
+
+<details>
+<summary><b>Validation checks, since there is no ground truth</b></summary>
 
 | Check | Result |
 |---|---|
@@ -227,25 +231,42 @@ Every rule was pre-registered except the final `regional` rule, which was revise
 | Manual review of 15 episodes | 12 correct, 2 borderline, 1 doubtful |
 | Changing the reference station | 92.4% agreement over 445 episodes |
 
-### Data gaps
+</details>
+
+<details>
+<summary><b>Data gaps</b></summary>
 
 Missing data is heavy and was never imputed. **26% of PM2.5 hours (21,672) cannot be assessed against the 24-hour standard** because the window is under 75% complete, so the PM2.5 episode count is an undercount. Separately, gaps split single events in two, which inflates the count by about 2.3% (57 pairs). The longest unbroken stretch anywhere is 350 hours, which is why no sequence model such as an LSTM was attempted.
 
-### Suspect sensor readings were labelled, not deleted
+</details>
+
+<details>
+<summary><b>Suspect sensor readings were labelled, not deleted</b></summary>
 
 Seven episodes are marked `unverifiable`. The clearest is SO₂ at station 225611 in June 2025, which jumps from about 0.003 to about 0.077 ppm and stays there for most of the month, with no other station measuring SO₂ to check against. The rule only establishes that no other station was measuring, not that another station disagreed.
 
-### Wind is modelled, not measured
+</details>
+
+<details>
+<summary><b>Wind is modelled, not measured</b></summary>
 
 Open-Meteo wind is a model grid, not an instrument at the station. Map Ta Phut is coastal, where the land and sea breeze reverses daily, and a 9 km grid may resolve that poorly. ERA5 at 25 km gives both near-estate stations identical wind because they are only 4.4 km apart, so it serves as a fallback only. `boundary_layer_height` was dropped because the API returned only the first 7 hours of each day, with implausible values.
 
-### Forecast caveats
+</details>
+
+<details>
+<summary><b>Forecast caveats</b></summary>
 
 The validation half-year contains no hot season. Wind at the issue time is used rather than a wind forecast, and no hyperparameters were tuned. Results apply only to station 225611, one horizon, and the tested period.
 
-### Other
+</details>
+
+<details>
+<summary><b>Other</b></summary>
 
 Industrial locations come from OpenStreetMap alone, not the WRI database, and 205 of 277 sites are unnamed. The 1/d² weighting is a crude stand-in for dilution, not a dispersion model. The PM2.5 warning threshold of 37.5 µg/m³ is a 24-hour standard applied to hourly values, so it is a reference level rather than an exceedance. The SO₂ threshold of 0.1 ppm was confirmed from a secondary source and has not been checked against the original gazette text.
+
+</details>
 
 ## Project structure
 
@@ -305,8 +326,8 @@ An OpenAQ API key is required. Create a `.env` file in the project root containi
 
 | File | What it shows |
 |---|---|
-| `reports/example_episodes.png` | Four example episodes: PM2.5 in January 2025 where all stations rise together, PM2.5 in March 2025 where only a near-estate station stays high, and two SO₂ jumps at station 225611 that then stay flat, one of them the June 2025 case under Limitations |
-| `reports/cpf_rose.png` | Conditional probability by wind direction, for SO₂ and PM2.5: how likely a reading in the station's top 25% is when the wind comes from each direction. Orange bars are the estate directions |
+| `reports/example_episodes.png` | Four example episodes: one regional PM2.5 pattern, one local PM2.5 pattern, and two SO₂ plateaus at station 225611 (one is the June 2025 case in Limitations) |
+| `reports/cpf_rose.png` | How likely a high reading (top 25% of that station's readings) is for each wind direction; orange bars are the estate directions |
 | `reports/manual_check_1.png` to `_3.png` | The 15 episodes reviewed by eye |
 
 ## Credits
