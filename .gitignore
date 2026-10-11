@@ -228,6 +228,9 @@ dashboard/*.SemanticModel/
 dashboard/maptaphut_theme.json
 dashboard/pages_spec.md
 
+# ภาพที่ export จาก Power BI ไว้ตรวจ ภาพที่ใช้จริงอยู่ใน docs/assets/
+reports/maptaphut_air_quality_page-*.jpg
+
 # ไฟล์ที่ใช้ทำงานในเครื่องเท่านั้น ไม่ขึ้น git
 .env.example
 CLAUDE.md
