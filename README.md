@@ -264,7 +264,7 @@ The validation half-year contains no hot season. Wind at the issue time is used 
 <details>
 <summary><b>Other</b></summary>
 
-Industrial locations come from OpenStreetMap alone, not the WRI database, and 205 of 277 sites are unnamed. The 1/d² weighting is a crude stand-in for dilution, not a dispersion model. The PM2.5 warning threshold of 37.5 µg/m³ is a 24-hour standard applied to hourly values, so it is a reference level rather than an exceedance. The SO₂ threshold of 0.1 ppm was confirmed from a secondary source and has not been checked against the original gazette text.
+Industrial locations come from OpenStreetMap alone, not the WRI database, and 205 of 277 sites are unnamed. The 1/d² weighting is a crude stand-in for dilution, not a dispersion model. The PM2.5 warning threshold of 37.5 µg/m³ is a 24-hour standard applied to hourly values, so it is a reference level rather than an exceedance.
 
 </details>
 
