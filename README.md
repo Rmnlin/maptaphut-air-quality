@@ -208,7 +208,7 @@ Wind agreement and a reference-station comparison cannot prove where pollution c
 
 ### The reference station is not clean
 
-Station 717 has **40.9 km² of industrial land within 10 km**, more than either near-estate station. The local increment is therefore an industrial area minus another industrial area, which understates it whenever wind carries the estate into 717. Hours like that are excluded, and a cleaner station, 225690 with 5.3 km², was used to check the result.
+Station 717 has **40.9 km² of industrial land within 10 km**, about the same as the two near-estate stations (40.7 and 39.7 km²). The local increment is therefore an industrial area minus another industrial area, which understates it whenever wind carries the estate into 717. Hours like that are excluded, and a cleaner station, 225690 with 5.3 km², was used to check the result.
 
 ### PM2.5 labels depend on which reference station is used
 
