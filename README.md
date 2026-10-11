@@ -236,7 +236,7 @@ Every rule was pre-registered except the final `regional` rule, which was revise
 <details>
 <summary><b>Data gaps</b></summary>
 
-Missing data is heavy and was never imputed. **26% of PM2.5 hours (21,672) cannot be assessed against the 24-hour standard** because the window is under 75% complete, so the PM2.5 episode count is an undercount. Separately, gaps split single events in two, which inflates the count by about 2.3% (57 pairs). The longest unbroken stretch anywhere is 350 hours, which is why no sequence model such as an LSTM was attempted.
+Missing data is heavy and was never imputed. **26% of PM2.5 hours (21,672) cannot be assessed against the 24-hour standard** because the window is under 75% complete, so the PM2.5 episode count is an undercount. Separately, gaps split single events in two, which inflates the count by about 2.3% (57 pairs). The longest unbroken stretch at station 225611 is 350 hours (696 at any station), which is why no sequence model such as an LSTM was attempted.
 
 </details>
 
