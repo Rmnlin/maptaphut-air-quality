@@ -19,7 +19,7 @@ Power BI runs no model of its own. It reads the six CSV files in `data/export/`,
 
 ![Overview page](assets/dashboard-overview.jpg)
 
-Four cards carry the headline numbers, followed by a monthly line per station and a bar chart of the same pollutant by calendar month. The pollutant selector on the left is a disconnected table, so one click re-titles and re-plots both charts. The seasonal shape is the point: January averages 33.5 µg/m³ against 11.4 in July. The fourth card reports 60.0% of PM2.5 hours missing, and the note beneath the slicers breaks that figure down per station, because each station started measuring at a different time and the series are not directly comparable.
+Four cards carry the headline numbers, followed by a monthly line per station and a bar chart of the same pollutant by calendar month. The pollutant selector on the left is a disconnected table, so one click re-titles and re-plots both charts. The seasonal shape is the point: January averages 33.5 µg/m³ against 11.4 in July. The fourth card reports 36.8% of PM2.5 hours missing, counted over each station's own PM2.5 period, and the note beneath the slicers breaks that figure down per station. The stations cover different periods, so their series are best compared by trend rather than level.
 
 ### Episodes
 
@@ -37,13 +37,13 @@ PM2.5 and SO₂ forecast 24 hours ahead at station 225611, over the test period 
 
 ![Wind direction page](assets/dashboard-wind.jpg)
 
-Power BI has no built-in polar chart, so the wind rose is drawn as 16 direction bars; a bar chart was preferred over a Python visual because it needs no add-in and still responds to slicers. Orange marks the directions where industrial areas lie, defined from OpenStreetMap geometry before any pollution data was examined. Switching the pollutant selector tells the story: for SO₂ the orange bars are the tall ones, while for PM2.5, shown here, the tall bars are the other directions. The bottom right chart gives the hour count per direction, because a high probability computed from few hours means little.
+Power BI has no built-in polar chart, so the wind rose is drawn as 16 direction bars; a bar chart was preferred over a Python visual because it needs no add-in and still responds to slicers. Blue marks the directions where industrial areas lie, defined from OpenStreetMap geometry before any pollution data was examined. Switching the pollutant selector tells the story: for SO₂ the blue bars are the tall ones, while for PM2.5, shown here, the tall bars are the other directions. The bottom right chart gives the hour count per direction, because a high probability computed from few hours means little.
 
 ### Map
 
 ![Map page](assets/dashboard-map.jpg)
 
-Azure Maps would not render on this machine, so the page uses a scatter chart of longitude against latitude. There is no basemap behind the points, which is a real limitation, but the spatial relationship still reads clearly: the industrial areas form a band along the coast and up to the north, and the two near-estate stations sit inside the dense southern cluster while the reference station sits apart from it.
+Azure Maps would not render on this machine, so the page uses a scatter chart of longitude against latitude. There is no basemap behind the points, which is a real limitation, but the spatial relationship still reads clearly: the industrial areas form a band along the coast and up to the north, and the two near-estate stations sit inside the dense southern cluster, while reference station 717 sits in the northern cluster, which is why it is not a clean reference (see Limitations in the README).
 
 ## Conventions
 
