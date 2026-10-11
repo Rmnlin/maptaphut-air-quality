@@ -58,7 +58,7 @@ Nothing runs backwards, and every step after the three fetch scripts works offli
 | 225611 | Health Promotion Hospital Maptaput | Near the industrial estate | 4.5 km |
 | 7846 | Field Crop Research Center, Rayong | Near the industrial estate | 5.8 km |
 | 717 | Pluakdaeng District Health Office | Reference (main) | 33.4 km |
-| 225690 | Agricultural Office | Reference (alternative, for checking only) | 13.7 km |
+| 225690 | Agricultural Office | Reference (alternative, for checking only) | 15.5 km |
 
 ### Coverage and missing data
 
@@ -88,7 +88,7 @@ No negative or duplicate values were found. Sensor-stuck runs were **flagged, no
 
 An hour is flagged as abnormal when it meets **either** of two criteria:
 
-- **Robust z-score ≥ 5**: the reading sits at least five typical spreads above the usual level, where the usual level is the median so that a few extreme hours do not distort it. It is computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for gases), because 30% of SO₂ groups otherwise have a deviation of zero and the score would divide by zero.
+- **Robust z-score ≥ 5**: the reading sits at least five typical spreads above the usual level, where the usual level is the median so that a few extreme hours do not distort it. It is computed per station, season and hour of day, so each station is compared against its own normal. The median absolute deviation is floored at the instrument resolution (0.001 ppm for SO₂, NO₂ and O₃, 0.01 ppm for CO), because 23.4% of SO₂ hours fall in groups whose deviation is zero and the score would divide by zero.
 - **Above the national standard**, using the 1-hour limit for gases and the 24-hour rolling mean for PM2.5 and PM10, requiring at least 18 of 24 hours present.
 
 Both are needed. For PM2.5, 4,445 hours exceed the standard while the z-score sees nothing, because dry-season haze is "normal" for that season at that station. Flagged hours that are consecutive at the same station and pollutant become one episode.
@@ -101,7 +101,7 @@ The local increment is the near-estate reading minus the reference reading at th
 
 Industrial directions were defined from OpenStreetMap geometry **before any pollution data was examined**: sectors were ranked by area weighted by 1/d², and the top sectors making up 80% of the weight were taken as the estate directions. Rules are applied in order, and the first match wins:
 
-1. `unclear-no-data` if wind or reference coverage is below half the episode, or no increment is available
+1. `unclear-no-data` if wind or reference data covers half the episode or less, or no increment is available
 2. `regional` if the reference station reads at least half of the near-station value **and** the increment does not exceed the p75 threshold
 3. `local-consistent` if wind comes from an estate direction for at least 60% of hours **and** the increment exceeds p75
 4. `unclear-mixed` otherwise
@@ -217,7 +217,7 @@ Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ ep
 <details>
 <summary><b>One rule was written after seeing results</b></summary>
 
-Every rule was pre-registered except the final `regional` rule, which was revised after the pre-registered version proved faulty. It changed 3.0% of labels and, in practice, is decided by the increment condition rather than the ratio condition. Both versions are reported so the reader can judge.
+The final `regional` rule was revised after the first version proved faulty. It changed 3.0% of labels and, in practice, is decided by the increment condition rather than the ratio condition. Both versions are reported so the reader can judge.
 
 </details>
 
