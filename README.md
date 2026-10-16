@@ -27,7 +27,7 @@ Map Ta Phut, Rayong, hosts one of Thailand's largest industrial estates. Air pol
 2. Is each episode *consistent with* a local source or with regional pollution?
 3. Can a model forecast PM2.5 and SO₂ 24 hours ahead better than a simple baseline?
 
-The labels say "consistent with" because they show agreement with wind direction and a reference station, not proof of cause, and no individual facility is named.
+The labels say "consistent with" because they rest on wind direction and a comparison with a reference station, not proof of cause, and no individual facility is named.
 
 ## Pipeline
 
@@ -204,7 +204,7 @@ Power BI reads only the six CSV files in `data/export/` and runs no model of its
 
 ### The labels are associations, not causes
 
-Many facilities sit in the same direction from each station, so wind agreement cannot separate one source from another.
+Wind from the estate's direction and a reference-station comparison cannot prove where pollution came from, because many facilities sit in the same direction.
 
 ### The reference station is not clean
 
