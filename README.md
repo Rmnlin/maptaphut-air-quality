@@ -27,8 +27,6 @@ Map Ta Phut, Rayong, hosts one of Thailand's largest industrial estates. Air pol
 2. Is each episode *consistent with* a local source or with regional pollution?
 3. Can a model forecast PM2.5 and SO₂ 24 hours ahead better than a simple baseline?
 
-Throughout, "consistent with" is used deliberately. The labels describe statistical agreement with wind direction and a reference station. They do not prove the cause of any episode, and no individual facility is identified.
-
 ## Pipeline
 
 ```mermaid
@@ -80,7 +78,7 @@ Missing hours were never filled in. Where rows are needed on a regular hourly gr
 
 ### Quality checks
 
-No negative or duplicate values were found. Sensor-stuck runs were **flagged, not removed**: 7,896 of 510,697 rows (1.55%) carry the flag. Notably, SO₂ at station 225611 jumps in June 2025 and stays high for almost the whole month. It was kept in the data and labelled `unverifiable`, because no other station measured SO₂ then and it cannot be confirmed.
+No negative or duplicate values were found. Sensor-stuck runs were **flagged, not removed**: 7,896 of 510,697 rows (1.55%) carry the flag.
 
 ## Methods
 
@@ -208,11 +206,11 @@ Wind agreement and a reference-station comparison cannot prove where pollution c
 
 ### The reference station is not clean
 
-Station 717 has **40.9 km² of industrial land within 10 km**, about the same as the two near-estate stations (40.7 and 39.7 km²). The local increment is therefore an industrial area minus another industrial area, which understates it whenever wind carries the estate into 717. Hours like that are excluded, and a cleaner station, 225690 with 5.3 km², was used to check the result.
+Station 717 has **40.9 km² of industrial land within 10 km**, about the same as the two near-estate stations (40.7 and 39.7 km²). The local increment is therefore an industrial area minus another industrial area, which understates it whenever wind carries the estate into 717. A cleaner station, 225690 with 5.3 km², was used to check the result.
 
 ### PM2.5 labels depend on which reference station is used
 
-Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ episodes and 39 of 41 NO₂ episodes, but for only **28 of 50 PM2.5 episodes (56.0%)**. Across all pollutants, 411 of the 445 episodes that both stations can judge agree (92.4%). **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
+Re-labelling against station 225690 gives the same label for 278 of 278 SO₂ episodes and 39 of 41 NO₂ episodes, but for only **28 of 50 PM2.5 episodes (56.0%)**. **PM2.5 labels should be read as a tendency, not as a verdict on any single episode.** Station 225690 also only has data from April 2021 to January 2025.
 
 <details>
 <summary><b>One rule was written after seeing results</b></summary>
@@ -229,14 +227,14 @@ The final `regional` rule was revised after the first version proved faulty. It 
 | Threshold sensitivity | Labels unchanged across ratio 0.3 to 0.7; 1.9% change at p50, and 7.3 to 8.1% at p90 |
 | Season, an independent check because season is not in the rules | PM2.5 `regional` is 55.9% in winter, 48.6% in the hot season and 15.2% in the rainy season, matching Thailand's haze season |
 | Manual review of 15 episodes | 12 correct, 2 borderline, 1 doubtful |
-| Changing the reference station | 92.4% agreement over 445 episodes |
+| Changing the reference station | 411 of the 445 episodes both stations can judge agree (92.4%) |
 
 </details>
 
 <details>
 <summary><b>Data gaps</b></summary>
 
-Missing data is heavy and was never imputed. **26% of PM2.5 hours (21,672) cannot be assessed against the 24-hour standard** because the window is under 75% complete, so the PM2.5 episode count is an undercount. Separately, gaps split single events in two, which inflates the count by about 2.3% (57 pairs). The longest unbroken stretch at station 225611 is 350 hours (696 at any station), which is why no sequence model such as an LSTM was attempted.
+**26% of PM2.5 hours (21,672) cannot be assessed against the 24-hour standard** because the window is under 75% complete, so the PM2.5 episode count is an undercount. Separately, gaps split single events in two, which inflates the count by about 2.3% (57 pairs). The longest unbroken stretch at station 225611 is 350 hours (696 at any station), which is why no sequence model such as an LSTM was attempted.
 
 </details>
 
@@ -250,21 +248,21 @@ Seven episodes are marked `unverifiable`. The clearest is SO₂ at station 22561
 <details>
 <summary><b>Wind is modelled, not measured</b></summary>
 
-Open-Meteo wind is a model grid, not an instrument at the station. Map Ta Phut is coastal, where the land and sea breeze reverses daily, and a 9 km grid may resolve that poorly. ERA5 at 25 km gives both near-estate stations identical wind because they are only 4.4 km apart, so it serves as a fallback only. `boundary_layer_height` was dropped because the API returned only the first 7 hours of each day, with implausible values.
+Open-Meteo wind is a model grid, not an instrument at the station. Map Ta Phut is coastal, where the land and sea breeze reverses daily, and a 9 km grid may resolve that poorly. ERA5 at 25 km gives both near-estate stations identical wind because they are only 4.4 km apart, so it serves as a fallback only.
 
 </details>
 
 <details>
 <summary><b>Forecast caveats</b></summary>
 
-The validation half-year contains no hot season. Wind at the issue time is used rather than a wind forecast, and no hyperparameters were tuned. Results apply only to station 225611, one horizon, and the tested period.
+Wind at the issue time is used rather than a wind forecast, and no hyperparameters were tuned. Results apply only to station 225611, one horizon, and the tested period.
 
 </details>
 
 <details>
 <summary><b>Other</b></summary>
 
-Industrial locations come from OpenStreetMap alone, not the WRI database, and 205 of 277 sites are unnamed. The 1/d² weighting is a crude stand-in for dilution, not a dispersion model. The PM2.5 warning threshold of 37.5 µg/m³ is a 24-hour standard applied to hourly values, so it is a reference level rather than an exceedance.
+The 1/d² weighting is a crude stand-in for dilution, not a dispersion model. The PM2.5 warning threshold of 37.5 µg/m³ is a 24-hour standard applied to hourly values, so it is a reference level rather than an exceedance.
 
 </details>
 
